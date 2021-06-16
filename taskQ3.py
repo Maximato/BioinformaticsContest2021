@@ -1,3 +1,4 @@
+from bisect import bisect_left, insort_left
 from treelib import Tree
 
 
@@ -37,7 +38,7 @@ def taskQ3L1(parameters):
         max_hpo = 0
         likely_disease = 0
         for i, disease in enumerate(diseases):
-            hpo = _calc_HPO_2(patient.split()[1:], disease.split()[1:], tree, pair_value)
+            hpo = _calc_HPO_1(patient.split()[1:], disease.split()[1:], tree, )
             if hpo > max_hpo:
                 max_hpo = hpo
                 likely_disease = i + 1
@@ -46,11 +47,25 @@ def taskQ3L1(parameters):
     return "\n".join(ans)
 
 
+def _binary_search(sorted_list, el):
+    while True:
+        i = int(len(sorted_list)/2)
+        if el > sorted_list[i]:
+            sorted_list = sorted_list[i:]
+        elif el < sorted_list[i]:
+            sorted_list = sorted_list[:i]
+        else:
+            return True
+
+        if i == 0:
+            return False
+
+
 def _get_closest_parent(tree, q, d):
     if d == "1" or q == "1" or q == d:
         return d
-    qparents = {q}
-    dparents = {d}
+    qparents = [q]
+    dparents = [d]
     while True:
         qparent = tree.parent(q)
         dparent = tree.parent(d)
@@ -64,12 +79,13 @@ def _get_closest_parent(tree, q, d):
         else:
             dparent = '1'
 
-        if qparent == dparent or (qparent in dparents):
+        if qparent == dparent or _binary_search(dparents, qparent):
             return qparent
-        if dparent in qparents:
+        if _binary_search(qparents, dparent):
             return dparent
-        qparents.add(qparent)
-        dparents.add(dparent)
+
+        insort_left(qparents, qparent)
+        insort_left(dparents, dparent)
         q = qparent
         d = dparent
 
@@ -108,8 +124,8 @@ def _calc_HPO_2(patient, disease, tree, pair_value):
     return hpo
 
 
-params = read_one_task_params("qual/inputQ3L4.txt")
+params = read_one_task_params("qual/inputQ3L3.txt")
 answer = taskQ3L1(params)
 
-with open("output/outputQ3L4.txt", "w") as w:
+with open("output/outputQ3L3.txt", "w") as w:
     w.write(answer + "\n")

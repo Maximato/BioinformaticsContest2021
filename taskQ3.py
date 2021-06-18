@@ -1,4 +1,3 @@
-from bisect import bisect_left, insort_left
 from treelib import Tree
 
 
@@ -17,7 +16,25 @@ def read_one_task_params(filename):
     return tasks_parameters
 
 
-def taskQ3L1(parameters):
+def taskQ3L2(parameters):
+    tree = _create_tree2(parameters)
+
+    diseases = [p.split()[1:] for p in parameters[1]]
+    patients = [p.split()[1:] for p in parameters[2]]
+    print("tree vertex:", len(tree))
+    print("patients count:", len(patients))
+    print("disease count:", len(diseases))
+
+    ans = []
+    pair_value = {}
+    for p, patient in enumerate(patients):
+        likely_disease = _calc_likely_disease(tree, patient, diseases, pair_value)
+        ans.append(likely_disease)
+        print("patient calculated:", p)
+    return "\n".join(ans)
+
+
+def _create_tree1(parameters):
     parents = parameters[0][0].split()
     informations = list(map(int, parameters[0][1].split()))
     tree = Tree()
@@ -26,106 +43,89 @@ def taskQ3L1(parameters):
     for p, i in zip(parents, informations[1:]):
         tree.create_node(str(identifier), str(identifier), parent=p, data=i)
         identifier += 1
-    # tree.show()
-
-    diseases = parameters[1]
-    patients = parameters[2]
-    ans = []
-    print("patients count:", len(patients))
-    print("desiase count:", len(diseases))
-    pair_value = {}
-    for p, patient in enumerate(patients):
-        max_hpo = 0
-        likely_disease = 0
-        for i, disease in enumerate(diseases):
-            hpo = _calc_HPO_1(patient.split()[1:], disease.split()[1:], tree, )
-            if hpo > max_hpo:
-                max_hpo = hpo
-                likely_disease = i + 1
-        ans.append(str(likely_disease))
-        print("patient calculated:", p)
-    return "\n".join(ans)
+    tree.show()
+    return tree
 
 
-def _binary_search(sorted_list, el):
-    while True:
-        i = int(len(sorted_list)/2)
-        if el > sorted_list[i]:
-            sorted_list = sorted_list[i:]
-        elif el < sorted_list[i]:
-            sorted_list = sorted_list[:i]
+def _create_tree2(parameters):
+    parents = parameters[0][0].split()
+    informations = list(map(int, parameters[0][1].split()))
+    tree = dict()
+    tree['1'] = (None, informations[0], 1)
+    identifier = 2
+    for parent, info in zip(parents, informations[1:]):
+        tree[str(identifier)] = (parent, info, tree[parent][2] + 1)
+        identifier += 1
+    return tree
+
+
+def _get_lca1(tree, q, d):
+    q_depth = tree.depth(q)
+    d_depth = tree.depth(d)
+
+    while q_depth != d_depth:
+        if q_depth > d_depth:
+            q_depth -= 1
+            q = tree.parent(q).tag
         else:
-            return True
+            d_depth -= 1
+            d = tree.parent(d).tag
 
-        if i == 0:
-            return False
+    while d != q:
+        q = tree.parent(q).tag
+        d = tree.parent(d).tag
+    return d
 
 
-def _get_closest_parent(tree, q, d):
-    if d == "1" or q == "1" or q == d:
-        return d
-    qparents = [q]
-    dparents = [d]
-    while True:
-        qparent = tree.parent(q)
-        dparent = tree.parent(d)
-        if qparent is not None:
-            qparent = qparent.tag
+def _get_lca2(tree, q, d):
+    q_depth = tree[q][2]
+    d_depth = tree[d][2]
+
+    while q_depth != d_depth:
+        if q_depth > d_depth:
+            q_depth -= 1
+            q = tree[q][0]
         else:
-            qparent = '1'
+            d_depth -= 1
+            d = tree[d][0]
 
-        if dparent is not None:
-            dparent = dparent.tag
-        else:
-            dparent = '1'
-
-        if qparent == dparent or _binary_search(dparents, qparent):
-            return qparent
-        if _binary_search(qparents, dparent):
-            return dparent
-
-        insort_left(qparents, qparent)
-        insort_left(dparents, dparent)
-        q = qparent
-        d = dparent
+    while d != q:
+        q = tree[q][0]
+        d = tree[d][0]
+    return d
 
 
-def _calc_HPO_1(patient, disease, tree):
-    hpo = 0
-    for q in patient:
-        max_value = 0
-        for d in disease:
-            closes_parent_id = _get_closest_parent(tree, q, d)
-            value = tree.get_node(closes_parent_id).data
-            if value > max_value:
-                max_value = value
-        hpo += max_value
-    return hpo
+def _calc_likely_disease(tree, patient, diseases, pair_value):
+    max_score = 0
+    i_max_score = 0
+    for i_des, disease in enumerate(diseases):
+        score = 0
+        for q in patient:
+            #pair = str(i_des) + " " + q
+            #if pair in pair_value:
+            #    dscore = pair_value[pair]
+            #else:
+            dscore = _calc_dscore(tree, disease, q)
+            #pair_value[pair] = dscore
+            score += dscore
+
+        if score > max_score:
+            max_score = score
+            i_max_score = i_des
+    return str(i_max_score + 1)
 
 
-def _calc_HPO_2(patient, disease, tree, pair_value):
-    hpo = 0
-    for q in patient:
-        max_value = 0
-        for d in disease:
-            pair1 = q + " " + d
-            pair2 = d + " " + q
-            if pair1 in pair_value:
-                value = pair_value[pair1]
-            elif pair2 in pair_value:
-                value = pair_value[pair2]
-            else:
-                closes_parent_id = _get_closest_parent(tree, q, d)
-                value = tree.get_node(closes_parent_id).data
-                pair_value[pair1] = value
-            if value > max_value:
-                max_value = value
-        hpo += max_value
-    return hpo
+def _calc_dscore(tree, disease, q):
+    max_value = 0
+    for d in disease:
+        value = tree[_get_lca2(tree, q, d)][1]
+        if value > max_value:
+            max_value = value
+    return max_value
 
 
 params = read_one_task_params("qual/inputQ3L3.txt")
-answer = taskQ3L1(params)
+answer = taskQ3L2(params)
 
 with open("output/outputQ3L3.txt", "w") as w:
     w.write(answer + "\n")

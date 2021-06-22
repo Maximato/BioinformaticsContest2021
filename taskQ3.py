@@ -16,7 +16,7 @@ def read_one_task_params(filename):
     return tasks_parameters
 
 
-def taskQ3L2(parameters):
+def taskQ3(parameters):
     tree = _create_tree2(parameters)
 
     diseases = [p.split()[1:] for p in parameters[1]]
@@ -125,7 +125,7 @@ def _calc_dscore(tree, disease, q):
 
 
 params = read_one_task_params("qual/inputQ3L3.txt")
-answer = taskQ3L2(params)
+answer = taskQ3(params)
 
 with open("output/outputQ3L3.txt", "w") as w:
     w.write(answer + "\n")

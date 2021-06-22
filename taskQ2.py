@@ -1,7 +1,7 @@
-from bisect import bisect_left, insort_left
+from bisect import bisect_left
 
 
-def read_str_parameters(filename, rows):
+def read_parameters(filename, rows):
     tasks_parameters = []
     with open("data/" + filename) as f:
         f.readline()
@@ -14,7 +14,8 @@ def read_str_parameters(filename, rows):
     return tasks_parameters
 
 
-def taskQ2L1(parameters):
+def taskQ2_1(parameters):
+    # решение для уровня номер 1 и 2
     masses = list(map(float, parameters[1].split()))
     adducts = list(map(float, parameters[2].split()))
     signals = list(map(float, parameters[3].split()))
@@ -25,7 +26,8 @@ def taskQ2L1(parameters):
     return "\n".join(answers)
 
 
-def taskQ2L2(parameters):
+def taskQ2_2(parameters):
+    # решение для уровня номер 3
     masses = list(map(float, parameters[1].split()))
     adducts = list(map(float, parameters[2].split()))
     signals = list(map(float, parameters[3].split()))
@@ -48,44 +50,40 @@ def taskQ2L2(parameters):
     for signal in signals:
         if i % 100 == 0:
             print(i)
-        closest_sum_index = _find_closest_sum_index(signal, sorted_summes)
+        closest_sum_index = _find_closest_in_sorted(signal, sorted_summes)
         answers.append(sorted_data[closest_sum_index][0])
         i += 1
     return "\n".join(answers)
 
 
-def taskQ2L3(parameters):
+def taskQ2_3(parameters):
+    # решение для уровня номер 4 и 5
     masses = list(map(float, parameters[1].split()))
     adducts = list(map(float, parameters[2].split()))
     signals = list(map(float, parameters[3].split()))
 
-    mass_indexes = [i+1 for i in range(len(masses))]
-    adduct_indexes = [i+1 for i in range(len(adducts))]
+    print("add indexes and sort masses")
+    indexes = [str(i+1) for i in range(len(masses))]
+    masses_sorted_data = [(index, mass) for mass, index in sorted(zip(masses, indexes))]
+    masses_sorted = [data[1] for data in masses_sorted_data]
 
-    sorted_masses = [(index, mass) for mass, index in sorted(zip(masses, mass_indexes))]
-    sorted_adducts = [(index, adduct) for adduct, index in sorted(zip(adducts, adduct_indexes))]
-
-    sorted_summes = []
-    sorted_summes_ind = []
-    print("run summes")
-    for m in sorted_masses:
-        for a in sorted_adducts:
-            ind = f"{m[0]} {a[0]}"
-            summ = m[1] + a[1]
-
-            # делаю сортированный список с суммами
-            sorted_summes.append(summ)
-            sorted_summes_ind.append(ind)
-
-    print("run signals:", len(signals))
+    print(f"run signals in count: {len(signals)}")
     answers = []
-    i = 0
-    for signal in signals:
+    for i, signal in enumerate(signals):
         if i % 100 == 0:
-            print(i)
-        closest_summ_ind = _find_closest_sum_index(signal, sorted_summes)
-        answers.append(sorted_summes_ind[closest_summ_ind])
-        i += 1
+            print(f"signal counting - {i}")
+
+        min_diff = 10000000
+        ans = "1 1"
+        for i_a, a in enumerate(adducts):
+            s = signal - a
+            index_mass = _find_closest_in_sorted(s, masses_sorted)
+            diff = abs(masses_sorted[index_mass] - s)
+            if diff < min_diff:
+                min_diff = diff
+                ans = f"{masses_sorted_data[index_mass][0]} {i_a + 1}"
+
+        answers.append(ans)
     return "\n".join(answers)
 
 
@@ -101,25 +99,26 @@ def _find_closest_pair(to, masses, adducts):
     return f"{pair[0] + 1} {pair[1] + 1}"
 
 
-def _find_closest_sum_index(signal, sorted_summes):
-    pos = bisect_left(sorted_summes, signal)
+def _find_closest_in_sorted(value, sorted_values):
+    pos = bisect_left(sorted_values, value)
     if pos == 0:
         return 0
 
-    if pos == len(sorted_summes):
+    if pos == len(sorted_values):
         return pos - 1
 
-    before = sorted_summes[pos - 1]
-    after = sorted_summes[pos]
-    if after - signal < signal - before:
+    before = sorted_values[pos - 1]
+    after = sorted_values[pos]
+    if after - value < value - before:
         return pos
     else:
         return pos - 1
 
 
 answers = []
-for params in read_str_parameters("qual/inputQ2L5.txt", 4):
-    answers.append(taskQ2L3(params))
+for params in read_parameters("qual/inputQ2L5.txt", 4):
+    answers.append(taskQ2_3(params))
+
 
 with open("output/outputQ2L5.txt", "w") as w:
     for ans in answers:

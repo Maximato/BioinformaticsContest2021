@@ -17,6 +17,7 @@ def read_one_task_params(filename):
 
 
 def taskQ3(parameters):
+    # решение для уровня номер 1 и 2
     tree = _create_tree2(parameters)
 
     diseases = [p.split()[1:] for p in parameters[1]]
@@ -26,9 +27,8 @@ def taskQ3(parameters):
     print("disease count:", len(diseases))
 
     ans = []
-    pair_value = {}
     for p, patient in enumerate(patients):
-        likely_disease = _calc_likely_disease(tree, patient, diseases, pair_value)
+        likely_disease = _calc_likely_disease(tree, patient, diseases)
         ans.append(likely_disease)
         print("patient calculated:", p)
     return "\n".join(ans)
@@ -95,18 +95,13 @@ def _get_lca2(tree, q, d):
     return d
 
 
-def _calc_likely_disease(tree, patient, diseases, pair_value):
+def _calc_likely_disease(tree, patient, diseases):
     max_score = 0
     i_max_score = 0
     for i_des, disease in enumerate(diseases):
         score = 0
         for q in patient:
-            #pair = str(i_des) + " " + q
-            #if pair in pair_value:
-            #    dscore = pair_value[pair]
-            #else:
             dscore = _calc_dscore(tree, disease, q)
-            #pair_value[pair] = dscore
             score += dscore
 
         if score > max_score:
@@ -124,8 +119,8 @@ def _calc_dscore(tree, disease, q):
     return max_value
 
 
-params = read_one_task_params("qual/inputQ3L3.txt")
+params = read_one_task_params("qual/inputQ3L2.txt")
 answer = taskQ3(params)
 
-with open("output/outputQ3L3.txt", "w") as w:
+with open("output/outputQ3L2.txt", "w") as w:
     w.write(answer + "\n")

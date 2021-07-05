@@ -1,4 +1,4 @@
-def read_str_parameters(filename, rows):
+def read_parameters(filename: str, rows: int) -> list:
     tasks_parameters = []
     with open("data/" + filename) as f:
         f.readline()
@@ -11,7 +11,7 @@ def read_str_parameters(filename, rows):
     return tasks_parameters
 
 
-def taskB(params):
+def taskB(params: list) -> str:
     ans = []
     s = params[0]
     ss = params[1]
@@ -22,9 +22,9 @@ def taskB(params):
 
 
 answers = []
-for params in read_str_parameters("prequal/inputB.txt", 2):
+for params in read_parameters("prequal/inputB.txt", 2):
     answers.append(taskB(params))
 
-with open("output/outputB.txt", "w") as w:
+with open("results/prequal/outputB.txt", "w") as w:
     for ans in answers:
         w.write(ans + "\n")

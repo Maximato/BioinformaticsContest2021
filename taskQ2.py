@@ -1,7 +1,7 @@
 from bisect import bisect_left
 
 
-def read_parameters(filename, rows):
+def read_parameters(filename: str, rows: int) -> list:
     tasks_parameters = []
     with open("data/" + filename) as f:
         f.readline()
@@ -14,20 +14,19 @@ def read_parameters(filename, rows):
     return tasks_parameters
 
 
-def taskQ2_1(parameters):
-    # решение для уровня номер 1 и 2
+def taskQ2_1(parameters: list) -> str:
+    # solving for level 1 and 2
     masses = list(map(float, parameters[1].split()))
     adducts = list(map(float, parameters[2].split()))
     signals = list(map(float, parameters[3].split()))
     answers = []
     for i, signal in enumerate(signals):
-        print(i)
         answers.append(_find_closest_pair(signal, masses, adducts))
     return "\n".join(answers)
 
 
-def taskQ2_2(parameters):
-    # решение для уровня номер 3
+def taskQ2_2(parameters: list) -> str:
+    # solving for level 3
     masses = list(map(float, parameters[1].split()))
     adducts = list(map(float, parameters[2].split()))
     signals = list(map(float, parameters[3].split()))
@@ -56,8 +55,8 @@ def taskQ2_2(parameters):
     return "\n".join(answers)
 
 
-def taskQ2_3(parameters):
-    # решение для уровня номер 4 и 5
+def taskQ2_3(parameters: list) -> str:
+    # solving for level 4 and 5
     masses = list(map(float, parameters[1].split()))
     adducts = list(map(float, parameters[2].split()))
     signals = list(map(float, parameters[3].split()))
@@ -87,7 +86,7 @@ def taskQ2_3(parameters):
     return "\n".join(answers)
 
 
-def _find_closest_pair(to, masses, adducts):
+def _find_closest_pair(to: float, masses: list, adducts: list) -> str:
     minimal = 1e10
     pair = (0, 0)
     for i, mass in enumerate(masses):
@@ -99,7 +98,7 @@ def _find_closest_pair(to, masses, adducts):
     return f"{pair[0] + 1} {pair[1] + 1}"
 
 
-def _find_closest_in_sorted(value, sorted_values):
+def _find_closest_in_sorted(value: float, sorted_values: list) -> int:
     pos = bisect_left(sorted_values, value)
     if pos == 0:
         return 0
@@ -115,11 +114,27 @@ def _find_closest_in_sorted(value, sorted_values):
         return pos - 1
 
 
-answers = []
-for params in read_parameters("qual/inputQ2L5.txt", 4):
-    answers.append(taskQ2_3(params))
+# level 1
+with open("results/qual/Q2/outputQ2L1.txt", "w") as w:
+    for params in read_parameters("qual/Q2/1.txt", 4):
+        w.write(taskQ2_1(params) + "\n")
 
+# level 2
+with open("results/qual/Q2/outputQ2L2.txt", "w") as w:
+    for params in read_parameters("qual/Q2/2.txt", 4):
+        w.write(taskQ2_1(params) + "\n")
 
-with open("output/outputQ2L5.txt", "w") as w:
-    for ans in answers:
-        w.write(ans + "\n")
+# level 3
+with open("results/qual/Q2/outputQ2L3.txt", "w") as w:
+    for params in read_parameters("qual/Q2/3.txt", 4):
+        w.write(taskQ2_2(params) + "\n")
+
+# level 4
+with open("results/qual/Q2/outputQ2L4.txt", "w") as w:
+    for params in read_parameters("qual/Q2/4.txt", 4):
+        w.write(taskQ2_3(params) + "\n")
+
+# level 5
+with open("results/qual/Q2/outputQ2L5.txt", "w") as w:
+    for params in read_parameters("qual/Q2/5.txt", 4):
+        w.write(taskQ2_3(params) + "\n")

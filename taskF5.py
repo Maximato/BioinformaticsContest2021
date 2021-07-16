@@ -93,31 +93,31 @@ def _find_closest_in_sorted(value: int, sorted_values: list) -> int:
 
 
 # level 1
-with open("output/F5L1.txt", "w") as w:
-    for ans in taskF5(*read_data("final/Q5/1.txt")):
+with open("results/final/F5/F5L1.txt", "w") as w:
+    for ans in taskF5(*read_data("final/F4/1.txt")):
         w.write(ans + "\n")
 
 # level 2
-with open("output/F5L2.txt", "w") as w:
-    for ans in taskF5(*read_data("final/Q5/2.txt")):
+with open("results/final/F5/F5L2.txt", "w") as w:
+    for ans in taskF5(*read_data("final/F4/2.txt")):
         w.write(ans + "\n")
 
 # level 3
-with open("output/F5L3.txt", "w") as w:
-    for ans in taskF5(*read_data("final/Q5/3.txt")):
+with open("results/final/F5/F5L3.txt", "w") as w:
+    for ans in taskF5(*read_data("final/F4/3.txt")):
         w.write(ans + "\n")
 
 # level 4
-with open("output/F5L4.txt", "w") as w:
-    for ans in taskF5(*read_data("final/Q5/4.txt")):
+with open("results/final/F5/F5L4.txt", "w") as w:
+    for ans in taskF5(*read_data("final/F4/4.txt")):
         w.write(ans + "\n")
 
 # level 5
-with open("output/F5L5.txt", "w") as w:
-    for ans in taskF5(*read_data("final/Q5/5.txt")):
+with open("results/final/F5/F5L5.txt", "w") as w:
+    for ans in taskF5(*read_data("final/F4/5.txt")):
         w.write(ans + "\n")
 
 # level 6
-with open("output/F5L6.txt", "w") as w:
-    for ans in taskF5(*read_data("final/Q5/6.txt")):
+with open("results/final/F5/F5L6.txt", "w") as w:
+    for ans in taskF5(*read_data("final/F4/6.txt")):
         w.write(ans + "\n")

@@ -65,21 +65,21 @@ def _calc_chi2(stat_in_pos: dict, ill_count: int, health_count: int) -> float:
 
 
 # level 1
-with open("output/F2L1.txt", "w") as w:
-    for task_par in read_data("final/Q2/1.txt"):
+with open("results/final/F2/F2L1.txt", "w") as w:
+    for task_par in read_data("final/F2/1.txt"):
         w.write(taskF2(task_par, power=0.9) + "\n")
 
 # level 2
-with open("output/F2L2.txt", "w") as w:
-    for task_par in read_data("final/Q2/2.txt"):
+with open("results/final/F2/F2L2.txt", "w") as w:
+    for task_par in read_data("final/F2/2.txt"):
         w.write(taskF2(task_par, power=0.8) + "\n")
 
 # level 3
-with open("output/F2L3.txt", "w") as w:
-    for task_par in read_data("final/Q2/3.txt"):
+with open("results/final/F2/F2L3.txt", "w") as w:
+    for task_par in read_data("final/F2/3.txt"):
         w.write(taskF2(task_par, power=0.7) + "\n")
 
 # level 4
-with open("output/F2L4.txt", "w") as w:
-    for task_par in read_data("final/Q2/4.txt"):
+with open("results/final/F2/F2L4.txt", "w") as w:
+    for task_par in read_data("final/F2/4.txt"):
         w.write(taskF2(task_par, power=0.7) + "\n")

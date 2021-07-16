@@ -114,43 +114,43 @@ def _recovering(u: list, gap_positions: list, gap_stats: dict):
 
 
 # level 1
-answers = taskF1(*read_data("final/Q1/1.txt"), deep=7)
-with open("output/F1L1.txt", "w") as w:
+answers = taskF1(*read_data("final/F1/1.txt"), deep=7)
+with open("results/final/F1/F1L1.txt", "w") as w:
     for ans in answers:
         w.write("".join(ans) + "\n\n")
 
 # level 2
-answers = taskF1(*read_data("final/Q1/2.txt"), deep=25)
-with open("output/F1L2.txt", "w") as w:
+answers = taskF1(*read_data("final/F1/2.txt"), deep=25)
+with open("results/final/F1/F1L2.txt", "w") as w:
     for ans in answers:
         w.write("".join(ans) + "\n\n")
 
 # level 3
-answers = taskF1(*read_data("final/Q1/3.txt"), deep=50)
-with open("output/F1L3.txt", "w") as w:
+answers = taskF1(*read_data("final/F1/3.txt"), deep=50)
+with open("results/final/F1/F1L3.txt", "w") as w:
     for ans in answers:
         w.write("".join(ans) + "\n\n")
 
 # level 4
-answers = taskF1(*read_data("final/Q1/4.txt"), deep=80)
-with open("output/F1L4.txt", "w") as w:
+answers = taskF1(*read_data("final/F1/4.txt"), deep=80)
+with open("results/final/F1/F1L4.txt", "w") as w:
     for ans in answers:
         w.write("".join(ans) + "\n\n")
 
 # level 5
-answers = taskF1(*read_data("final/Q1/5.txt"), deep=80)
-with open("output/F1L5.txt", "w") as w:
+answers = taskF1(*read_data("final/F1/5.txt"), deep=80)
+with open("results/final/F1/F1L5.txt", "w") as w:
     for ans in answers:
         w.write("".join(ans) + "\n\n")
 
 # level 6
-answers = taskF1(*read_data("final/Q1/6.txt"), deep=80)
-with open("output/F1L6.txt", "w") as w:
+answers = taskF1(*read_data("final/F1/6.txt"), deep=80)
+with open("results/final/F1/F1L6.txt", "w") as w:
     for ans in answers:
         w.write("".join(ans) + "\n\n")
 
 # level 7
-answers = taskF1(*read_data("final/Q1/7.txt"), deep=80)
-with open("output/F1L7.txt", "w") as w:
+answers = taskF1(*read_data("final/F1/7.txt"), deep=80)
+with open("results/final/F1/F1L7.txt", "w") as w:
     for ans in answers:
         w.write("".join(ans) + "\n\n")

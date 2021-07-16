@@ -81,32 +81,32 @@ def _run_exact_simulation(spreader: int, contacts_in_days: list, simulation_time
 
 
 # level 1
-with open("output/F3L1.txt", "w") as w:
-    for i, task_par in enumerate(read_data("final/Q3/1.txt")):
+with open("results/final/F3/F3L1.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/F3/1.txt")):
         print(f"task {i} processing ================")
         w.write(taskF3(*task_par, simulation_times=100) + "\n")
 
 # level 2
-with open("output/F3L2.txt", "w") as w:
-    for i, task_par in enumerate(read_data("final/Q3/2.txt")):
+with open("results/final/F3/F3L2.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/F3/2.txt")):
         print(f"task {i} processing ================")
         w.write(taskF3(*task_par, simulation_times=200) + "\n")
 
 # level 3
-with open("output/F3L3.txt", "w") as w:
-    for i, task_par in enumerate(read_data("final/Q3/3.txt")):
+with open("results/final/F3/F3L3.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/F3/3.txt")):
         print(f"task {i} processing ================")
         w.write(taskF3(*task_par, simulation_times=100) + "\n")
 
 # level 4
-with open("output/F3L4.txt", "w") as w:
-    for i, task_par in enumerate(read_data("final/Q3/4.txt")):
+with open("results/final/F3/F3L4.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/F3/4.txt")):
         print(f"task {i} processing ================")
         w.write(taskF3(*task_par, simulation_times=10, short_simulation=5, top_count=50) + "\n")
 
 # level 5
-with open("output/F3L5.txt", "w") as w:
-    for i, task_par in enumerate(read_data("final/Q3/5.txt")):
+with open("results/final/F3/F3L5.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/F3/5.txt")):
         print(f"task {i} processing ================")
         if i == 7:
             tc = 5000
@@ -115,8 +115,8 @@ with open("output/F3L5.txt", "w") as w:
         w.write(taskF3(*task_par, simulation_times=10, short_simulation=5, top_count=tc, hard_limit=10000) + "\n")
 
 # level 6
-with open("output/F3L6.txt", "w") as w:
-    for i, task_par in enumerate(read_data("final/Q3/6.txt")):
+with open("results/final/F3/F3L6.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/F3/6.txt")):
         print(f"task {i} processing ================")
         if i == 0:
             tc = 100

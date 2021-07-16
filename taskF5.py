@@ -1,7 +1,7 @@
 from bisect import bisect_left
 
 
-def read_data(filename):
+def read_data(filename: str) -> (list, list, int):
     with open("data/" + filename) as f:
         n, d = map(int, f.readline().strip().split())
         isoforms = []
@@ -15,8 +15,7 @@ def read_data(filename):
     return isoforms, reads, d
 
 
-def taskF5(isoforms, reads, d):
-    # answer for Q1, Q2
+def taskF5(isoforms: list, reads: list, d: int) -> list:
     print("preprocessing")
     for i, iso in enumerate(isoforms):
         isoforms[i] = {"starts": [int(el.split("-")[0]) for el in iso],
@@ -24,41 +23,25 @@ def taskF5(isoforms, reads, d):
 
     for i, r in enumerate(reads):
         reads[i] = [tuple(map(int, el.split("-"))) for el in r]
-    '''
-    for iso in isoforms:
-        for i, j in zip(iso["starts"][Q1:], iso["ends"][:-Q1]):
-            if i-j == Q1:
-                print("one diff btw interwals iso")
 
-    for iso in isoforms:
-        for i, j in zip(iso["starts"], iso["ends"]):
-            if j-i == Q1:
-                print("one diff in interval iso")
-
-    for r in reads:
-        for i, j in r:
-            if j-i == Q1:
-                print("one diff in interval read")
-    '''
-    print("run test")
-    print(f"isoforms {len(isoforms)}")
-    print(f"reads {len(reads)}")
+    print(f"isoforms: {len(isoforms)}")
+    print(f"reads: {len(reads)}")
     answers = []
     for ir, r in enumerate(reads):
-        print(f"reads run {ir}")
+        print(f"read {ir} of {len(reads)} is running")
         matches = []
         for i, iso in enumerate(isoforms):
-            if is_matching(r, iso, d):
+            if _is_matching(r, iso, d):
                 matches.append(i)
 
         if len(matches) == 0:
-            answers.append("-Q1 0")
+            answers.append("-1 0")
         else:
             answers.append(f"{matches[0]} {len(matches)}")
     return answers
 
 
-def is_matching(r, iso, d):
+def _is_matching(r: list, iso: dict, d: int) -> bool:
     # find start interval
     start_pos = _find_closest_in_sorted(r[0][1], iso["ends"])
     if r[0][1]-d <= iso["ends"][start_pos] <= r[0][1] + d:
@@ -93,7 +76,7 @@ def is_matching(r, iso, d):
     return True
 
 
-def _find_closest_in_sorted(value, sorted_values):
+def _find_closest_in_sorted(value: int, sorted_values: list) -> int:
     pos = bisect_left(sorted_values, value)
     if pos == 0:
         return 0
@@ -109,18 +92,32 @@ def _find_closest_in_sorted(value, sorted_values):
         return pos - 1
 
 
-def stack_intervals(intervals):
-    stacked = [intervals[0]]
-    for interval in intervals[1:]:
-        if stacked[-1][1] == interval[0] + 1:
-            stacked[-1] = (stacked[-1][0], interval[1])
-        else:
-            stacked.append(interval)
-    return stacked
+# level 1
+with open("output/F5L1.txt", "w") as w:
+    for ans in taskF5(*read_data("final/Q5/1.txt")):
+        w.write(ans + "\n")
 
+# level 2
+with open("output/F5L2.txt", "w") as w:
+    for ans in taskF5(*read_data("final/Q5/2.txt")):
+        w.write(ans + "\n")
 
-answers = taskF5(*read_data("final/inputF5L2.txt"))
+# level 3
+with open("output/F5L3.txt", "w") as w:
+    for ans in taskF5(*read_data("final/Q5/3.txt")):
+        w.write(ans + "\n")
 
-with open("output/outputF5L2.txt", "w") as w:
-    for ans in answers:
+# level 4
+with open("output/F5L4.txt", "w") as w:
+    for ans in taskF5(*read_data("final/Q5/4.txt")):
+        w.write(ans + "\n")
+
+# level 5
+with open("output/F5L5.txt", "w") as w:
+    for ans in taskF5(*read_data("final/Q5/5.txt")):
+        w.write(ans + "\n")
+
+# level 6
+with open("output/F5L6.txt", "w") as w:
+    for ans in taskF5(*read_data("final/Q5/6.txt")):
         w.write(ans + "\n")

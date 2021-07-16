@@ -1,4 +1,4 @@
-def read_data(filename):
+def read_data(filename: str) -> list:
     tasks_input = []
     with open("data/" + filename) as f:
         t = int(f.readline().rstrip())
@@ -13,59 +13,73 @@ def read_data(filename):
     return tasks_input
 
 
-def taskF2(organisms):
-    disease_stat = get_disease_stat(organisms)
+def taskF2(organisms: list, power: float) -> str:
+    print("disease stat collecting")
+    disease_stat, ill_count, health_count = _get_disease_stats(organisms)
     print(disease_stat)
-    params = []
+
+    print("chi2 calculation")
+    chi2_calculations = []
     for stat_in_pos in disease_stat:
-        params.append(calc_param(stat_in_pos))
-    max_score = max(params)
-    intervals = [i for i, p in enumerate(params) if p > 2]
+        chi2_calculations.append(_calc_chi2(stat_in_pos, ill_count, health_count))
+    print(chi2_calculations)
+
+    print("find interval\n")
+    max_correlation = max(chi2_calculations)
+
+    intervals = [i for i, chi2 in enumerate(chi2_calculations) if chi2 > max_correlation*power]
+
     if len(intervals) == 1:
         return f"{intervals[0]} {intervals[0]}"
-    if len(intervals) == 0:
-        idx = params.index(max_score)
-        return f"{idx} {idx}"
-    print(params)
+
     return f"{intervals[0]} {intervals[-1]}"
 
 
-def get_disease_stat(organisms):
-    # order: A, T, G, C
+def _get_disease_stats(organisms: list) -> (list, int, int):
     order = ["A", "T", "G", "C"]
     disease_stat = [{"ill": [0, 0, 0, 0], "ok": [0, 0, 0, 0]} for _ in range(len(organisms[0][1]))]
-    dds = 0
-    oks = 0
+    ill_count = 0
+    health_count = 0
     for is_ill, seq in organisms:
         if is_ill == "+":
-            oks += 1
+            health_count += 1
             for i, sign in enumerate(seq):
                 disease_stat[i]["ill"][order.index(sign)] += 1
         else:
-            dds += 1
+            ill_count += 1
             for i, sign in enumerate(seq):
                 disease_stat[i]["ok"][order.index(sign)] += 1
 
-    for piec in disease_stat:
-        for i in range(4):
-            piec["ill"][i] = piec["ill"][i]/dds
-            piec["ok"][i] = piec["ill"][i] / oks
-
-    return disease_stat
+    return disease_stat, ill_count, health_count
 
 
-def calc_param(stat_in_pos):
-    score = 1
+def _calc_chi2(stat_in_pos: dict, ill_count: int, health_count: int) -> float:
+    # H0 hypothesis - stat position do not correlate with disease
+    expected = [(stat_in_pos["ill"][i] + stat_in_pos["ok"][i])/(ill_count+health_count)*health_count for i in range(4)]
+
+    score = 0
     for i in range(4):
-        score += (stat_in_pos["ill"][i] - stat_in_pos["ok"][i])**2
+        if expected[i] != 0:
+            score += 1/expected[i]*(stat_in_pos["ok"][i]-expected[i])**2
     return score
 
 
-answers = []
-for task_par in read_data("final/Q2/4.txt"):
-    answers.append(taskF2(task_par))
+# level 1
+with open("output/F2L1.txt", "w") as w:
+    for task_par in read_data("final/Q2/1.txt"):
+        w.write(taskF2(task_par, power=0.9) + "\n")
 
+# level 2
+with open("output/F2L2.txt", "w") as w:
+    for task_par in read_data("final/Q2/2.txt"):
+        w.write(taskF2(task_par, power=0.8) + "\n")
 
-with open("output/output-04.txt", "w") as w:
-    for ans in answers:
-        w.write(ans + "\n")
+# level 3
+with open("output/F2L3.txt", "w") as w:
+    for task_par in read_data("final/Q2/3.txt"):
+        w.write(taskF2(task_par, power=0.7) + "\n")
+
+# level 4
+with open("output/F2L4.txt", "w") as w:
+    for task_par in read_data("final/Q2/4.txt"):
+        w.write(taskF2(task_par, power=0.7) + "\n")

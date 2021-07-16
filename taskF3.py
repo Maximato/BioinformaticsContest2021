@@ -2,7 +2,7 @@ import random
 import numpy as np
 
 
-def read_data(filename):
+def read_data(filename: str) -> list:
     tasks_input = []
     with open("data/" + filename) as f:
         T = int(f.readline().rstrip())
@@ -22,23 +22,52 @@ def read_data(filename):
     return tasks_input
 
 
-def taskF3_exact(n_people, contacts_in_days):
+def taskF3(n_people: int, contacts_in_days: list, simulation_times: int = 100, short_simulation: int = 5,
+           start_day: int = 0, deep: int = 3, top_count: int = 100, hard_limit: int = 100000) -> str:
     print("size of group", n_people)
 
+    # find the most perspective people for simulation
+    if n_people < hard_limit:
+        spreaders = range(n_people)
+        print("exact simulation")
+    else:
+        spreaders = _get_most_contactable(contacts_in_days, start_day, deep, top_count)
+        simulation_times = short_simulation
+
     max_spreader = None
-    max_end_ilness = 0
-    for spreader in range(n_people):
-        mean_ilness = run_exact_simulation(spreader, contacts_in_days, 5)
-        if mean_ilness > max_end_ilness:
-            max_end_ilness = mean_ilness
+    max_infected = 0
+    for i, spreader in enumerate(spreaders):
+        if i % 50 == 0:
+            print(f"spreader {i} of {len(spreaders)} is running...")
+
+        mean_ilness = _run_exact_simulation(spreader, contacts_in_days, simulation_times)
+        if mean_ilness > max_infected:
+            max_infected = mean_ilness
             max_spreader = spreader
-    print(f"max spreader: {max_spreader}. Score: {max_end_ilness}")
+
+    print(f"max spreader: {max_spreader}. Score: {max_infected}\n")
     return str(max_spreader)
 
 
-def run_exact_simulation(spreader, contacts_in_days, times):
+def _get_most_contactable(contacts_in_days: list, start_day: int, deep: int, top_count: int) -> list:
+    contact_counter = {}
+    for i in range(start_day, start_day + deep):
+        day_contacts = contacts_in_days[i]
+        for a, b, p in day_contacts:
+            if a in contact_counter:
+                contact_counter[a] += p
+            else:
+                contact_counter[a] = p
+
+    tops = sorted(contact_counter.items(), key=lambda x: x[1], reverse=True)[:top_count]
+    print("most contactable:\n", tops)
+    tops = [t[0] for t in tops]
+    return tops
+
+
+def _run_exact_simulation(spreader: int, contacts_in_days: list, simulation_times: int) -> np.ndarray:
     scores = []
-    for _ in range(times):
+    for _ in range(simulation_times):
         pacients = {spreader}
         for day_contacts in contacts_in_days:
             next_pacients = set()
@@ -51,55 +80,46 @@ def run_exact_simulation(spreader, contacts_in_days, times):
     return np.mean(scores)
 
 
-def taskF3_fast(n_people, contacts_in_days, tn):
-    print("size of group", n_people)
+# level 1
+with open("output/F3L1.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/Q3/1.txt")):
+        print(f"task {i} processing ================")
+        w.write(taskF3(*task_par, simulation_times=100) + "\n")
 
-    if n_people < 100000:
-        tops = range(n_people)
-        print("exact simulation")
-    else:
-        tops = get_most_contactable(contacts_in_days, start=0, deep=3)
-        print("most contactable:\n", tops)
-        tops = [t[0] for t in tops]
+# level 2
+with open("output/F3L2.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/Q3/2.txt")):
+        print(f"task {i} processing ================")
+        w.write(taskF3(*task_par, simulation_times=200) + "\n")
 
-    if tn == 0:
-        sim_numb = 5
-    else:
-        sim_numb = 30
+# level 3
+with open("output/F3L3.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/Q3/3.txt")):
+        print(f"task {i} processing ================")
+        w.write(taskF3(*task_par, simulation_times=100) + "\n")
 
-    max_spreader = None
-    max_end_ilness = 0
-    for i, spreader in enumerate(tops):
-        if i % 50 == 0:
-            print(f"spreader {i} of {len(tops)} is running...")
+# level 4
+with open("output/F3L4.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/Q3/4.txt")):
+        print(f"task {i} processing ================")
+        w.write(taskF3(*task_par, simulation_times=10, short_simulation=5, top_count=50) + "\n")
 
-        mean_ilness = run_exact_simulation(spreader, contacts_in_days, sim_numb)
-        if mean_ilness > max_end_ilness:
-            max_end_ilness = mean_ilness
-            max_spreader = spreader
-    print(f"max spreader: {max_spreader}. Score: {max_end_ilness}\n")
-    return str(max_spreader)
+# level 5
+with open("output/F3L5.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/Q3/5.txt")):
+        print(f"task {i} processing ================")
+        if i == 7:
+            tc = 5000
+        else:
+            tc = 1000
+        w.write(taskF3(*task_par, simulation_times=10, short_simulation=5, top_count=tc, hard_limit=10000) + "\n")
 
-
-def get_most_contactable(contacts_in_days, start=0, deep=3):
-    contact_counter = {}
-    for i in range(start, start + deep):
-        day_contacts = contacts_in_days[i]
-        for a, b, p in day_contacts:
-            if a in contact_counter:
-                contact_counter[a] += p
-            else:
-                contact_counter[a] = p
-
-    tops = sorted(contact_counter.items(), key=lambda x: x[1])[-100:]
-    return tops
-
-
-answers = []
-for i, task_par in enumerate(read_data("final/3/test6")[:1]):
-    print(f"task {i} processing ================")
-    answers.append(taskF3_fast(*task_par, i))
-
-with open("output/outputF3L6-2.txt", "w") as w:
-    for ans in answers:
-        w.write(ans + "\n")
+# level 6
+with open("output/F3L6.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/Q3/6.txt")):
+        print(f"task {i} processing ================")
+        if i == 0:
+            tc = 100
+        else:
+            tc = 1000
+        w.write(taskF3(*task_par, short_simulation=10, top_count=tc, hard_limit=10000) + "\n")

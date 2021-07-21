@@ -123,3 +123,9 @@ with open("results/final/F3/F3L6.txt", "w") as w:
         else:
             tc = 1000
         w.write(taskF3(*task_par, short_simulation=10, top_count=tc, hard_limit=10000) + "\n")
+
+# level 7
+with open("results/final/F3/F3L7.txt", "w") as w:
+    for i, task_par in enumerate(read_data("final/F3/7.txt")):
+        print(f"task {i} processing ================")
+        w.write(taskF3(*task_par, simulation_times=20, short_simulation=5, top_count=96000, hard_limit=10000) + "\n")
